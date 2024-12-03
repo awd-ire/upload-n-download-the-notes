@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Notes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Notes</h1>
+        <form id="uploadForm" action="http://localhost:3000/upload" method="POST" enctype="multipart/form-data">
+            <label for="subject_name">Subject Name:</label>
+            <input type="text" name="subject_name" id="subject_name" placeholder="Enter the subject name" required>
+
+            <label for="note">Upload File:</label>
+            <input type="file" name="note" id="note" accept=".pdf,.doc,.docx,.txt" required>
+
+            <button type="submit">Upload</button>
+        </form>
+        <p id="responseMessage" style="color: green;"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const responseMessage = document.getElementById('responseMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    responseMessage.textContent = 'File uploaded successfully!';
+                    form.reset();
+                } else {
+                    const error = await response.text();
+                    responseMessage.style.color = 'red';
+                    responseMessage.textContent = `Error: ${error}`;
+                }
+            } catch (err) {
+                console.error(err);
+                responseMessage.style.color = 'red';
+                responseMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
